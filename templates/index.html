@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bitcoin Price Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #121212;
+            color: #eeeeee;
+            text-align: center;
+            padding-top: 100px;
+        }
+        .coin-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .coin-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 16px 24px;
+            border-bottom: 1px solid #333;
+            font-size: 18px;
+            background-color: #1f1f1f;
+            color: #fff;
+        }
+        .coin-name {
+            flex: 1;
+            font-weight: bold;
+            text-align: left;
+        }
+        .coin-price {
+            flex: 1;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="coin-container" id="coin-container"></div>
+
+    <script>
+        async function fetchAllPrices() {
+            try {
+                const response = await fetch('/api/all-prices');
+                const data = await response.json();
+                const container = document.getElementById('coin-container');
+                container.innerHTML = ''; // 清空内容
+                for (const [coin, value] of Object.entries(data)) {
+                    const div = document.createElement('div');
+                    div.className = 'coin-box';
+                    div.innerHTML = `<span class="coin-name">${coin.toUpperCase()}</span><span class="coin-price">$${value.usd}</span>`;
+                    container.appendChild(div);
+                }
+            } catch (error) {
+                console.error("Failed to load prices", error);
+            }
+        }
+
+        fetchAllPrices();
+        setInterval(fetchAllPrices, 100000); // 每10秒刷新一次
+    </script>
+</body>
+</html>
